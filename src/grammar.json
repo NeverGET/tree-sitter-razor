@@ -40,7 +40,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "_text_chunk"
+            "name": "text_chunk"
           }
         ]
       }
@@ -868,7 +868,7 @@
     },
     {
       "type": "SYMBOL",
-      "name": "_text_chunk"
+      "name": "text_chunk"
     },
     {
       "type": "SYMBOL",

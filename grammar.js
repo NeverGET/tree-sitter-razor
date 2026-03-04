@@ -19,7 +19,7 @@ module.exports = grammar({
   externals: ($) => [
     $._code_block_start,   // '{'  when preceded by '@' context
     $._code_block_end,     // matching '}'
-    $._text_chunk,         // raw HTML/text that is NOT a Razor node
+    $.text_chunk,          // raw HTML/text that is NOT a Razor node
     $._comment_content,    // content inside @* ... *@ comments
   ],
 
@@ -38,7 +38,7 @@ module.exports = grammar({
           $.razor_explicit_expression,
           $.razor_implicit_expression,
           $.razor_escaped_at,
-          $._text_chunk,
+          $.text_chunk,
         ),
       ),
 

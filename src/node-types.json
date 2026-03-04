@@ -285,6 +285,10 @@
         {
           "type": "razor_section_directive",
           "named": true
+        },
+        {
+          "type": "text_chunk",
+          "named": true
         }
       ]
     }
@@ -375,6 +379,10 @@
   },
   {
     "type": "section_name",
+    "named": true
+  },
+  {
+    "type": "text_chunk",
     "named": true
   },
   {

@@ -32,7 +32,8 @@ module.exports = grammar({
         choice(
           $.razor_comment,
           $.razor_code_block,
-          $.razor_section_directive,
+          $.razor_section_block,
+          $.razor_functions_directive,
           $.razor_directive,
           $.razor_control_flow,
           $.razor_explicit_expression,
@@ -124,15 +125,26 @@ module.exports = grammar({
       )),
 
     // -------------------------------------------------------------------------
-    // @section Name { ... }
+    // @section Name { ... }   --- contains HTML+Razor content
+    // -------------------------------------------------------------------------
+    razor_section_block: ($) =>
+      prec(2, seq(
+        "@",
+        alias("section", $.directive_name),
+        alias(/[A-Za-z_]\w*/, $.section_name),
+        alias($._code_block_start, "{"),
+        alias($.code_block_body, $.razor_content),
+        alias($._code_block_end, "}"),
+      )),
+
+    // -------------------------------------------------------------------------
     // @functions { ... }
     // @code { ... }           (Blazor)
     // -------------------------------------------------------------------------
-    razor_section_directive: ($) =>
+    razor_functions_directive: ($) =>
       prec(2, seq(
         "@",
-        alias(choice("section", "functions", "code"), $.directive_name),
-        optional(alias(/[A-Za-z_]\w*/, $.section_name)),
+        alias(choice("functions", "code"), $.directive_name),
         alias($._code_block_start, "{"),
         alias($.code_block_body, $.csharp_code),
         alias($._code_block_end, "}"),
@@ -152,7 +164,7 @@ module.exports = grammar({
         // Optional condition: everything up to the opening brace (can be empty for else/finally)
         optional(alias(/[^{@\n][^{@]*/, $.control_condition)),
         alias($._code_block_start, "{"),
-        alias($.code_block_body, $.csharp_code),
+        alias($.code_block_body, $.razor_content),
         alias($._code_block_end, "}"),
         // else / else if chaining
         repeat($.razor_else_clause),
@@ -166,14 +178,14 @@ module.exports = grammar({
           alias("if", $.control_keyword),
           optional(alias(/[^{@]*/, $.control_condition)),
           alias($._code_block_start, "{"),
-          alias($.code_block_body, $.csharp_code),
+          alias($.code_block_body, $.razor_content),
           alias($._code_block_end, "}"),
         ),
         // plain else { }
         seq(
           alias("else", $.control_keyword),
           alias($._code_block_start, "{"),
-          alias($.code_block_body, $.csharp_code),
+          alias($.code_block_body, $.razor_content),
           alias($._code_block_end, "}"),
         ),
       ),

@@ -125,6 +125,21 @@
     }
   },
   {
+    "type": "razor_content",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "csharp_code",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "razor_control_flow",
     "named": true,
     "fields": {},
@@ -141,7 +156,7 @@
           "named": true
         },
         {
-          "type": "csharp_code",
+          "type": "razor_content",
           "named": true
         },
         {
@@ -187,7 +202,7 @@
           "named": true
         },
         {
-          "type": "csharp_code",
+          "type": "razor_content",
           "named": true
         }
       ]
@@ -209,6 +224,25 @@
     }
   },
   {
+    "type": "razor_functions_directive",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "csharp_code",
+          "named": true
+        },
+        {
+          "type": "directive_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "razor_implicit_expression",
     "named": true,
     "fields": {},
@@ -224,7 +258,7 @@
     }
   },
   {
-    "type": "razor_section_directive",
+    "type": "razor_section_block",
     "named": true,
     "fields": {},
     "children": {
@@ -232,11 +266,11 @@
       "required": true,
       "types": [
         {
-          "type": "csharp_code",
+          "type": "directive_name",
           "named": true
         },
         {
-          "type": "directive_name",
+          "type": "razor_content",
           "named": true
         },
         {
@@ -279,11 +313,15 @@
           "named": true
         },
         {
+          "type": "razor_functions_directive",
+          "named": true
+        },
+        {
           "type": "razor_implicit_expression",
           "named": true
         },
         {
-          "type": "razor_section_directive",
+          "type": "razor_section_block",
           "named": true
         },
         {

@@ -16,7 +16,11 @@
           },
           {
             "type": "SYMBOL",
-            "name": "razor_section_directive"
+            "name": "razor_section_block"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "razor_functions_directive"
           },
           {
             "type": "SYMBOL",
@@ -261,7 +265,65 @@
         ]
       }
     },
-    "razor_section_directive": {
+    "razor_section_block": {
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "@"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "section"
+            },
+            "named": true,
+            "value": "directive_name"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "[A-Za-z_]\\w*"
+            },
+            "named": true,
+            "value": "section_name"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_code_block_start"
+            },
+            "named": false,
+            "value": "{"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "code_block_body"
+            },
+            "named": true,
+            "value": "razor_content"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_code_block_end"
+            },
+            "named": false,
+            "value": "}"
+          }
+        ]
+      }
+    },
+    "razor_functions_directive": {
       "type": "PREC",
       "value": 2,
       "content": {
@@ -278,10 +340,6 @@
               "members": [
                 {
                   "type": "STRING",
-                  "value": "section"
-                },
-                {
-                  "type": "STRING",
                   "value": "functions"
                 },
                 {
@@ -292,23 +350,6 @@
             },
             "named": true,
             "value": "directive_name"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[A-Za-z_]\\w*"
-                },
-                "named": true,
-                "value": "section_name"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
           },
           {
             "type": "ALIAS",
@@ -434,7 +475,7 @@
             "name": "code_block_body"
           },
           "named": true,
-          "value": "csharp_code"
+          "value": "razor_content"
         },
         {
           "type": "ALIAS",
@@ -511,7 +552,7 @@
                 "name": "code_block_body"
               },
               "named": true,
-              "value": "csharp_code"
+              "value": "razor_content"
             },
             {
               "type": "ALIAS",
@@ -552,7 +593,7 @@
                 "name": "code_block_body"
               },
               "named": true,
-              "value": "csharp_code"
+              "value": "razor_content"
             },
             {
               "type": "ALIAS",

@@ -23,9 +23,7 @@ module.exports = grammar({
     $._comment_content,    // content inside @* ... *@ comments
   ],
 
-  conflicts: ($) => [
-    [$.razor_directive, $.razor_control_flow],
-  ],
+  conflicts: ($) => [],
 
   rules: {
     // Root of a .cshtml file
@@ -101,7 +99,7 @@ module.exports = grammar({
     // @preservewhitespace true
     // -------------------------------------------------------------------------
     razor_directive: ($) =>
-      seq(
+      prec(3, seq(
         "@",
         alias(
           choice(
@@ -123,7 +121,7 @@ module.exports = grammar({
           $.directive_name,
         ),
         alias(/[^\n\r]*/, $.directive_value),
-      ),
+      )),
 
     // -------------------------------------------------------------------------
     // @section Name { ... }
@@ -131,14 +129,14 @@ module.exports = grammar({
     // @code { ... }           (Blazor)
     // -------------------------------------------------------------------------
     razor_section_directive: ($) =>
-      seq(
+      prec(2, seq(
         "@",
         alias(choice("section", "functions", "code"), $.directive_name),
-        optional(alias(/\s+\w+/, $.section_name)),
+        optional(alias(/[A-Za-z_]\w*/, $.section_name)),
         alias($._code_block_start, "{"),
         alias($.code_block_body, $.csharp_code),
         alias($._code_block_end, "}"),
-      ),
+      )),
 
     // -------------------------------------------------------------------------
     // Control flow --- @if @for @foreach @while @switch @do @try @lock @using(...)
@@ -148,7 +146,7 @@ module.exports = grammar({
       seq(
         "@",
         alias(
-          choice("if", "else", "for", "foreach", "while", "switch", "do", "try", "catch", "finally", "lock", "using"),
+          choice("if", "else", "for", "foreach", "while", "switch", "do", "try", "catch", "finally", "lock"),
           $.control_keyword,
         ),
         // Optional condition: everything up to the opening brace (can be empty for else/finally)

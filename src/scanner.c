@@ -60,7 +60,11 @@ static bool scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
   Scanner *s = (Scanner *)payload;
 
   // --- COMMENT_CONTENT: consume everything until we see '*@' ---
-  if (valid_symbols[COMMENT_CONTENT]) {
+  // Only match when we're actually inside a comment context
+  // (i.e., CODE_BLOCK_START and TEXT_CHUNK are not valid alternatives)
+  if (valid_symbols[COMMENT_CONTENT] &&
+      !valid_symbols[CODE_BLOCK_START] &&
+      !valid_symbols[TEXT_CHUNK]) {
     bool consumed = false;
 
     while (lexer->lookahead != 0) {
@@ -94,6 +98,16 @@ static bool scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
   }
 
   // --- CODE_BLOCK_START: consume an opening '{' ---
+  // Skip horizontal whitespace (extras) before checking for '{' since tree-sitter
+  // does not auto-skip extras before calling external scanners.
+  // We only skip spaces and tabs, NOT newlines, since newlines are
+  // significant for directive parsing (@model, @using etc. are line-based).
+  if (valid_symbols[CODE_BLOCK_START] && !valid_symbols[TEXT_CHUNK]) {
+    while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
+           lexer->lookahead == '\r' || lexer->lookahead == '\n') {
+      skip(lexer);
+    }
+  }
   if (valid_symbols[CODE_BLOCK_START] && lexer->lookahead == '{') {
     advance(lexer);
     s->brace_depth++;
@@ -109,7 +123,7 @@ static bool scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
     return true;
   }
 
-  // --- TEXT_CHUNK: consume raw HTML/text until we hit '@', '<', or EOF ---
+  // --- TEXT_CHUNK: consume raw HTML/text until we hit '@' or EOF ---
   if (valid_symbols[TEXT_CHUNK]) {
     bool consumed = false;
 
@@ -119,11 +133,8 @@ static bool scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
       // Stop at Razor sigil
       if (c == '@') break;
 
-      // We let HTML tag content pass through as text; the C grammar handles '<'
-      // but for raw text outside tags we still include '<' here so HTML content
-      // isn't lost. The injections.scm will reinject it into the HTML grammar.
-      lexer->mark_end(lexer);
       advance(lexer);
+      lexer->mark_end(lexer);
       consumed = true;
     }
 
